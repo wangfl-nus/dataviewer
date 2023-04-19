@@ -60,7 +60,7 @@ class DataViewer():
         #root.resizable(0, 0) # makes the root window fixed in size.
         
         ## data profile
-        self.dataprofile = 1  # data profile { 0 | 1 } 
+        self.dataprofile_setting = 0  # data profile { 0 | 1 } 
         
         ## bms dataset 
         self.bms_ds = None 
@@ -103,6 +103,7 @@ class DataViewer():
          
         # Radio widgets, channels, 
         self.chn=tk.IntVar()
+        self.chn.set(0)
         self.chn_frame = tk.LabelFrame(self.controlframe, text="Channels")
         self.chn_frame.place(height=60, width=220, relx=0.04, y = 10) # rely=0.02
         self.R0 = tk.Radiobutton(self.chn_frame, text="Channel 0", variable=self.chn, value=0, padx=5, command=self.chn_sel)
@@ -116,28 +117,31 @@ class DataViewer():
         self.table_frame.place(height=260, width=220, relx=0.04, y = 80 ) #rely=0.15) # rely=0, 
 
         self.VSBMU_R = tk.Radiobutton(self.table_frame, text="VS-BMS (E-CANBus)", variable=self.tbi, value=7, padx=5, command=self.table_sel) #, ommand=sel)
-        self.VSBMU_R.grid(row=1, column=0, columnspan =2, sticky=tk.W, ipady=5, pady=5 )  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.VSBMU_R.grid(row=1, column=0, columnspan =2, sticky=tk.W, ipady=5, pady=5 )  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
          
         self.BMU_R = tk.Radiobutton(self.table_frame, text="BMU", variable=self.tbi, value=0, padx=5, command=self.table_sel) #, ommand=sel)
-        self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W) #, ipady=5, pady=5 )  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W) #, ipady=5, pady=5 )  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU0_R = tk.Radiobutton(self.table_frame, text="MMU 1", variable=self.tbi, value=1, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU0_R.grid(row=3, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU0_R.grid(row=3, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU1_R = tk.Radiobutton(self.table_frame, text="MMU 2", variable=self.tbi, value=2, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU1_R.grid(row=3, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU1_R.grid(row=3, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU2_R = tk.Radiobutton(self.table_frame, text="MMU 3", variable=self.tbi, value=3, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU2_R.grid(row=4, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU2_R.grid(row=4, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU3_R = tk.Radiobutton(self.table_frame, text="MMU 4", variable=self.tbi, value=4, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU3_R.grid(row=4, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU3_R.grid(row=4, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU4_R = tk.Radiobutton(self.table_frame, text="MMU 5", variable=self.tbi, value=5, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU4_R.grid(row=5, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU4_R.grid(row=5, column=0)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
 
         self.MMU5_R = tk.Radiobutton(self.table_frame, text="MMU 6", variable=self.tbi, value=6, padx=5, command=self.table_sel) #, ommand=sel)
-        self.MMU5_R.grid(row=5, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        # self.MMU5_R.grid(row=5, column=1)  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
+        
+        
+        self.redraw_tableframe()
         
         # data tables - external CANBus
         #self.e_table_frame = tk.LabelFrame(self.controlframe, text="Tables- External Bus")
@@ -182,6 +186,45 @@ class DataViewer():
     
         self.root.bind("<Configure>", self.resize)
      
+    ## redraw control frame with data profile setting
+    def redraw_tableframe(self):
+        
+        print("profile {}".format(self.dataprofile_setting))
+        print("chn {}".format(self.chn.get()))
+        
+        if self.dataprofile_setting == 0:   
+            if self.chn.get() == 0: 
+                self.table_frame.configure(text="Tables- Ext2MBMU")
+                self.BMU_R.grid_forget() # (row=2, column=0, columnspan =2, sticky=tk.W)  
+                self.MMU0_R.grid_forget() # (row=3, column=0)   
+                self.MMU1_R.grid_forget() # (row=3, column=1)   
+                self.MMU2_R.grid_forget() # (row=4, column=0)   
+                self.MMU3_R.grid_forget() # (row=4, column=1)   
+                self.MMU4_R.grid_forget() # (row=5, column=0)   
+                self.MMU5_R.grid_forget() # (row=5, column=1) 
+                self.VSBMU_R.grid(row=1, column=0, columnspan =2, sticky=tk.W, ipady=5, pady=5 )   
+            else: 
+                self.table_frame.configure(text="Tables- MBMU2SBMU")
+                self.VSBMU_R.grid_forget() 
+                self.MMU4_R.grid_forget() # (row=5, column=0)   
+                self.MMU5_R.grid_forget() # (row=5, column=1) 
+                self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W)  
+                self.MMU0_R.grid(row=3, column=0)   
+                self.MMU1_R.grid(row=3, column=1)   
+                self.MMU2_R.grid(row=4, column=0)   
+                self.MMU3_R.grid(row=4, column=1) 
+        else: 
+            self.table_frame.configure(text="Tables- Internal Bus") 
+            self.VSBMU_R.grid_forget()
+            self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W)  
+            self.MMU0_R.grid(row=3, column=0)   
+            self.MMU1_R.grid(row=3, column=1)   
+            self.MMU2_R.grid(row=4, column=0)   
+            self.MMU3_R.grid(row=4, column=1)   
+            self.MMU4_R.grid(row=5, column=0)   
+            self.MMU5_R.grid(row=5, column=1)   
+
+     
     def resize(self, event): 
         # print("widget {}, width {}, height {}".format(event.widget.winfo_name() ,  event.width, event.height))
         if event.widget.winfo_name() == "tk" :  # is root            
@@ -200,6 +243,7 @@ class DataViewer():
         self.statusframe.place(height=self.layout.statusframe_H, relwidth = 1, y=self.layout.root_H-self.layout.statusframe_H )# r
          
     def chn_sel(self):
+        self.redraw_tableframe()
         self.__update_to_tableviewer()
           
     def table_sel(self):
@@ -246,6 +290,7 @@ class DataViewer():
         rb.geometry("350x200")
         
         radio = tk.IntVar()
+        radio.set(self.dataprofile_setting)
         
         rb_label = ttk.Label(rb, text="Select correct data profile before loading raw data")
         rb_label.grid(row=0, column=0, sticky = tk.W, padx = 5, pady = 2)
@@ -257,7 +302,8 @@ class DataViewer():
         R2.grid(row=2, column=0, sticky = tk.W, padx = 5, pady = 2 ) 
   
         def _rb_quit():
-            self.dataprofile = radio.get() 
+            self.dataprofile_setting = radio.get() 
+            self.redraw_tableframe() 
             rb.quit()     # stops mainloop
             rb.destroy()  # this is necessary on Windows to prevent
   
@@ -322,6 +368,9 @@ class DataViewer():
     def __loaddata(self):
         fp = FileProcessor()
         rdh = RawDataHolder(filename=fp.filename, data=fp.df)
+         
+        ## disable profile setting 
+        self.setting_menu.entryconfig("Select Data Profile", state="disabled")
     
         if self.bms_ds is None:
             self.bms_ds = BMS_Dataset(name="bms-dataset") 
