@@ -19,6 +19,26 @@ class BMS_Dataset():
         self.rtime = 0 # raltive time 
         self.frames = 0
         self.frame_info = 136  # default value
+        self.invalid = False
+        
+        # validate ds
+        if self.dataprofile is not None:
+            nch = self.dataprofile.getNrOfChannel()
+            chnt = self.dataprofile.getChannelType()
+            for i in range(nch):
+                if chnt[i] == "CANBUS-EXT-MBMU":
+                    del self.ds[i]['bmu']   # delete bmu 
+                    del self.ds[i]['mmus']   # delete mmus
+                    self.ds[i]['ext']={}
+                    self.ds[i]['mbmu'] = self.ds[i]['ext']  # create mbmu referrring to bmu
+                    continue
+                if chnt[i] == "CANBUS-MBMU-SBMU":
+                    self.ds[i]['mbmu'] = self.ds[i]['bmu']  # create mbmu referrring to bmu
+                    self.ds[i]['sbmus'] = self.ds[i]['mmus']  # create sbmu referrring to mmus
+                    continue
+                if chnt[i] == "CANBUS-SBMU-MMU":
+                    self.ds[i]['sbmu'] = self.ds[i]['bmu']  # create mbmu referrring to bmu
+                    continue 
         
         # self.init_tilte()
         
@@ -128,27 +148,40 @@ class BMS_Dataset():
             print("Channel 0 - VS-BMS Data")
             __info(df=self.ds[0]['ext'], rtime=self.rtime)
             
-        
-        print("Channel 0 - BMU Data")
-        __info(df=self.ds[0]['bmu'], rtime=self.rtime)
-        
-        print("\nChannel 0 - MMU Data") 
-        for i in range(len(self.ds[0]['mmus'])):
-            print("MMU {}".format(i)) 
-            __info(df=self.ds[0]['mmus'][i], rtime=self.rtime)
-        
+        else:
+            print("Channel 0 - BMU Data")
+            __info(df=self.ds[0]['bmu'], rtime=self.rtime)
+
+            print("\nChannel 0 - MMU Data") 
+            for i in range(len(self.ds[0]['mmus'])):
+                print("MMU {}".format(i)) 
+                __info(df=self.ds[0]['mmus'][i], rtime=self.rtime)
+
         if 'ext' in self.ds[1].keys():
-            print("Channel 0 - VS-BMS Data")
+            print("Channel 1 - VS-BMS Data")
             __info(df=self.ds[1]['ext'], rtime=self.rtime)
-         
-        print("Channel 1 - BMU Data") 
-        __info(df=self.ds[1]['bmu'], rtime=self.rtime)
         
-        print("\nChannel 1 - MMU Data") 
-        for i in range(len(self.ds[1]['mmus'])):
-            print("MMU {}".format(i))
-            __info(df=self.ds[1]['mmus'][i], rtime=self.rtime)
+        else:
+            print("Channel 1 - BMU Data") 
+            __info(df=self.ds[1]['bmu'], rtime=self.rtime)
+
+            print("\nChannel 1 - MMU Data") 
+            for i in range(len(self.ds[1]['mmus'])):
+                print("MMU {}".format(i))
+                __info(df=self.ds[1]['mmus'][i], rtime=self.rtime)
+
+    def isvalid(self):
+        nch = self.dataprofile.getNrOfChannel()
+        if nch != len(self.ds):
+            print("error number of channels, profile: {},  ds {}".format(nch, len(self.ds)))
+            return False
         
+         #for i in range(nch):
+            # chninfo = self.dataprofile.getChannelInfo(chn=i)
+            # if chninfo['chnt'] == "CANBUS-EXT-MBMU":
+                
+            
+    
     def insert(self, ojson=None):
         if ojson:
             self.rtime += ojson['intval'] # frame.intval
@@ -156,19 +189,28 @@ class BMS_Dataset():
             # ojson = bframe.dump_to_json()
             
             if "ext" in ojson.keys(): # is e-canbus 
-                if 'ext' not in self.ds[chn].keys():
-                    self.ds[chn]['ext']={}
-                self.insert_dataframe(ojson=ojson, df=self.ds[chn]['ext']) 
+                if 'ext' in self.ds[chn].keys():
+                    self.insert_dataframe(ojson=ojson, df=self.ds[chn]['ext'])
+                else:
+                    # self.ds[chn]['ext']={}
+                    self.invalid = True 
             elif "mmu" in ojson.keys(): # is mmu
-                mmu= ojson['frame id'] & 0xff #  bframe.fid & 0xff
-                l = len(self.ds[chn]['mmus'])
-                while(l<=mmu):
-                    self.ds[chn]['mmus'].append({})
-                    l += 1  
-                self.insert_dataframe(ojson=ojson, df=self.ds[chn]['mmus'][mmu])                   
+                if 'mmus' in self.ds[chn].keys(): 
+                    mmu= ojson['frame id'] & 0xff #  bframe.fid & 0xff
+                    l = len(self.ds[chn]['mmus'])
+                    while(l<=mmu):
+                        self.ds[chn]['mmus'].append({})
+                        l += 1  
+                    self.insert_dataframe(ojson=ojson, df=self.ds[chn]['mmus'][mmu]) 
+                else:
+                    self.invalid = True
             else :
                 # print("is bmu")
-                self.insert_dataframe(ojson=ojson, df=self.ds[chn]['bmu'])
+                if 'bmu' in self.ds[chn].keys():
+                    self.insert_dataframe(ojson=ojson, df=self.ds[chn]['bmu'])
+                else:
+                    if ojson['name'] != "Invalid Frame ID":  # ignore 'Invalid Frame ID'  
+                        self.invalid = True  
                  
     def insert_dataframe(self, ojson=None, df=None):
 

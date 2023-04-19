@@ -59,6 +59,9 @@ class DataViewer():
         self.root.pack_propagate(False) # tells the root to not let the widgets inside it determine its size.
         #root.resizable(0, 0) # makes the root window fixed in size.
         
+        ## data profile
+        self.dataprofile = 1  # data profile { 0 | 1 } 
+        
         ## bms dataset 
         self.bms_ds = None 
         
@@ -84,6 +87,11 @@ class DataViewer():
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.root.destroy)
     
+        self.setting_menu = tk.Menu(m, tearoff=False) # Add Menu Dropdown
+        m.add_cascade(label="Setting", menu=self.setting_menu)
+        self.setting_menu.add_command(label="Select Data Profile", command=lambda: self.__sel_dataprofile())
+         
+        
         # Data Frame for TreeView
         self.dataframe = tk.LabelFrame(root, text="Battery Data", name="dataframe")  # frame1
         self.dataframe.place(width=self.layout.dataframe_W, height=self.layout.dataframe_H)  # height=600, width=1010
@@ -230,7 +238,35 @@ class DataViewer():
         
         # update the session frame 
         self.session_frame['text']= f"Session: {self.session.name}"
+    
+    
+    def __sel_dataprofile(self):
+        rb = tk.Toplevel(self.root)
+        rb.wm_title("Select Data Profile")
+        rb.geometry("350x200")
+        
+        radio = tk.IntVar()
+        
+        rb_label = ttk.Label(rb, text="Select correct data profile before loading raw data")
+        rb_label.grid(row=0, column=0, sticky = tk.W, padx = 5, pady = 2)
+        
+        R1 = tk.Radiobutton(rb, text="profile 0 - externl CAN bus", variable=radio, value=0) #, command=selection)  
+        R1.grid(row=1, column=0, sticky = tk.W, padx = 5, pady = 2 ) 
+  
+        R2 = tk.Radiobutton(rb, text="profile 1 - internal CAN bus", variable=radio, value=1) # ,  command=selection)  
+        R2.grid(row=2, column=0, sticky = tk.W, padx = 5, pady = 2 ) 
+  
+        def _rb_quit():
+            self.dataprofile = radio.get() 
+            rb.quit()     # stops mainloop
+            rb.destroy()  # this is necessary on Windows to prevent
+  
+        rb_btn = tk.Button(rb, text="Select", padx=10, command=lambda: _rb_quit())
+        rb_btn.grid(row=3, column=0, sticky = tk.W, padx = 5, pady = 12 ) 
          
+        self.root.mainloop() 
+          
+    
     def __savesession(self):
          self.session.save()
   
