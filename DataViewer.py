@@ -6,6 +6,7 @@
 
 #import sys
 #sys.path.insert(0,'./code')
+from dataprofile import *
 from dataparser import *
 from bmsdataset import * 
 from bmssession import *
@@ -60,7 +61,7 @@ class DataViewer():
         #root.resizable(0, 0) # makes the root window fixed in size.
         
         ## data profile
-        self.dataprofile_setting = 0  # data profile { 0 | 1 } 
+        self.dataprofile_setting = 1  # data profile { 0 | 1 } 
         
         ## bms dataset 
         self.bms_ds = None 
@@ -113,6 +114,7 @@ class DataViewer():
         
         # Radio widgets, data tables, internal CANBus
         self.tbi=tk.IntVar() 
+        # self.tbi.set(0)
         self.table_frame = tk.LabelFrame(self.controlframe, text="Tables- Internal Bus")
         self.table_frame.place(height=260, width=220, relx=0.04, y = 80 ) #rely=0.15) # rely=0, 
 
@@ -202,12 +204,14 @@ class DataViewer():
                 self.MMU3_R.grid_forget() # (row=4, column=1)   
                 self.MMU4_R.grid_forget() # (row=5, column=0)   
                 self.MMU5_R.grid_forget() # (row=5, column=1) 
+                self.tbi.set(7)
                 self.VSBMU_R.grid(row=1, column=0, columnspan =2, sticky=tk.W, ipady=5, pady=5 )   
             else: 
                 self.table_frame.configure(text="Tables- MBMU2SBMU")
                 self.VSBMU_R.grid_forget() 
                 self.MMU4_R.grid_forget() # (row=5, column=0)   
                 self.MMU5_R.grid_forget() # (row=5, column=1) 
+                self.tbi.set(0)
                 self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W)  
                 self.MMU0_R.grid(row=3, column=0)   
                 self.MMU1_R.grid(row=3, column=1)   
@@ -216,6 +220,7 @@ class DataViewer():
         else: 
             self.table_frame.configure(text="Tables- Internal Bus") 
             self.VSBMU_R.grid_forget()
+            self.tbi.set(0)
             self.BMU_R.grid(row=2, column=0, columnspan =2, sticky=tk.W)  
             self.MMU0_R.grid(row=3, column=0)   
             self.MMU1_R.grid(row=3, column=1)   
@@ -373,8 +378,8 @@ class DataViewer():
         self.setting_menu.entryconfig("Select Data Profile", state="disabled")
     
         if self.bms_ds is None:
-            self.bms_ds = BMS_Dataset(name="bms-dataset") 
-            print(self.bms_ds.ds[0]['bmu'])
+            self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0)) 
+            # print(self.bms_ds.ds[0]['bmu'])
      
         if rdh.isRawData == True:
             lines = rdh.rawdata 
@@ -423,6 +428,7 @@ class DataViewer():
             titles = self.bms_ds.get_title(ds=df, keys=get_bmukeys()) # get_bmukeys()
         elif _tableidx == 7: # VS-BMS
             _tablename = 'ext'
+            print(self.bms_ds.ds[_channel].keys())
             df = self.bms_ds.ds[_channel][_tablename] 
             titles = self.bms_ds.get_title(ds=df, keys=get_vsbmskeys()) # get_bmukeys() 
         else:  # mmu
