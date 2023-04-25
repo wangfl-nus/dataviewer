@@ -372,15 +372,18 @@ class DataViewer():
         
     def __loaddata(self):
         fp = FileProcessor()
+        
+        if fp.df is None:
+            return
+        
         rdh = RawDataHolder(filename=fp.filename, data=fp.df)
          
         ## disable profile setting 
         self.setting_menu.entryconfig("Select Data Profile", state="disabled")
     
         if self.bms_ds is None:
-            self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0)) 
-            # print(self.bms_ds.ds[0]['bmu'])
-     
+            self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0 if self.dataprofile_setting==0 else data_profile_1)) 
+            
         if rdh.isRawData == True:
             lines = rdh.rawdata 
             # print("__loaddata: lines = {}".format(len(lines)))
@@ -417,8 +420,8 @@ class DataViewer():
         
         tbs = ["BMU", "MMU 1", "MMU 2", "MMU 3", "MMU 4", "MMU 5", "MMU 6", "VS-BMS (E-CANBus)"] 
         
-        print("Channel {}".format(self.chn.get()))
-        print("Table {}".format(tbs[self.tbi.get()]))
+        # print("Channel {}".format(self.chn.get()))
+        # print("Table {}".format(tbs[self.tbi.get()]))
         
         _channel = self.chn.get()
         _tableidx = self.tbi.get()
@@ -428,7 +431,7 @@ class DataViewer():
             titles = self.bms_ds.get_title(ds=df, keys=get_bmukeys()) # get_bmukeys()
         elif _tableidx == 7: # VS-BMS
             _tablename = 'ext'
-            print(self.bms_ds.ds[_channel].keys())
+            # print(self.bms_ds.ds[_channel].keys())
             df = self.bms_ds.ds[_channel][_tablename] 
             titles = self.bms_ds.get_title(ds=df, keys=get_vsbmskeys()) # get_bmukeys() 
         else:  # mmu

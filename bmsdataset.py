@@ -118,6 +118,41 @@ class BMS_Dataset():
                             return v1  
         
         return None
+    
+    def getRichValueByColumn(self, chn=0, sheetNo=0, colname=None):
+        
+        __cl = self.getValueByColumn(chn=chn, sheetNo=sheetNo, colname=colname)
+        
+        if colname in ["BMS Mode Request", "BMS Mode"]:
+            cl = []
+            for i in __cl:
+                if i == 1:
+                    cl.append("Standby Mode")
+                elif i == 2:
+                    cl.append("Charge Mode")
+                elif i == 4:
+                    cl.append("Discharge Mode") 
+                 
+            return cl, [], [] # [1,2,4], ["Standby Mode", "Charge Mode", "Discharge Mode"]
+        
+        if colname == "BMS IMD Disabled":
+            cl = []
+            for i in __cl:
+                if i == 0:
+                    cl.append("Disconnect IMD")
+                else:
+                    cl.append("Connect IMD")
+            
+            return cl, [], [] # [0, 1], ["Disconnect IMD", "Connect IMD"] 
+        
+        if colname == "Number of Strings Connected":
+            cl = []
+            for i in __cl:
+                cl.append(int(i))
+        
+            return cl, [*range(0,5,1)], ["0", "1", "2", "3", "4"]
+        
+        return __cl, [], []
         
     def save(self, fpath='bms-dataset.json'):
         with open(fpath, 'w') as f:

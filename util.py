@@ -63,10 +63,10 @@ class FileProcessor:
                 self.df = pd.read_excel(excel_filename)
 
         except ValueError:
-            tk.messagebox.showerror("Information", "The file you have chosen is invalid")
+            messagebox.showerror("Information", "The file you have chosen is invalid")
             return None
         except FileNotFoundError:
-            tk.messagebox.showerror("Information", f"No such file as {file_path}")
+            messagebox.showerror("Information", f"No such file as {file_path}")
             return None
  
         '''

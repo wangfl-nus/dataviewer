@@ -49,9 +49,10 @@ class Plot:
         _channel = self.channel
         _table_idx = self.table_idx
 
-         # get values of one column 
-        cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=col_names[0]) # "Average Cell Voltage")
-        
+        # get values of one column 
+        # cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=col_names[0])
+        cl, ct, cr = self.df.getRichValueByColumn(chn=_channel, sheetNo=_table_idx, colname=col_names[0])
+         
         # title 
         _chnT = "Channel 0" if _channel == 0 else "Channel 1"
         if _table_idx == 0:
@@ -65,7 +66,11 @@ class Plot:
         top1.wm_title(f"Plot - {col_names[0]}, {_chnT}, {_sheetT}")  
 
         fig = Figure(figsize=(6, 4), dpi=100)
-        graph = fig.add_subplot()
+        graph = fig.add_subplot() 
+        
+        if len(cr) > 0: 
+            graph.set_yticks(ct, cr) 
+         
         graph.plot(range(len(cl)), cl)
 
         canvas = FigureCanvasTkAgg(fig, master=top1)  # A tk.DrawingArea.
@@ -99,7 +104,9 @@ class Plot:
             if vt < len(self.elements): 
                 colname = col_names[vt]
                 top1.wm_title(f"Plot - {colname}, {_chnT}, {_sheetT}")  
-                cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname) 
+                # cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname) 
+                cl, ct, cr = self.df.getRichValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname) 
+                 
             else:
                 if _table_idx > 0:
                     # handle cell voltemp
@@ -114,11 +121,14 @@ class Plot:
                     else:
                         return
                     top1.wm_title(f"Plot - {colname}, {_chnT}, {_sheetT}")
-                    cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname)
+                    # cl = self.df.getValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname)
+                    cl, ct, cr = self.df.getRichValueByColumn(chn=_channel, sheetNo=_table_idx, colname=colname)  
                 else:
                     return
 
             graph.clear()
+            if len(cr) > 0:
+                graph.set_yticks(ct, cr) 
             graph.plot(range(len(cl)), cl)
             canvas.draw()
 
