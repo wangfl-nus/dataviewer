@@ -68,7 +68,7 @@ class Plot:
         fig = Figure(figsize=(6, 4), dpi=100)
         graph = fig.add_subplot() 
         
-        graph.set_xlabel("time (unit: 0.1s)")
+        # graph.set_xlabel("time")
         graph.set_ylabel(col_names[0])
         
         if len(cr) > 0: 
@@ -130,7 +130,7 @@ class Plot:
                     return
 
             graph.clear()
-            graph.set_xlabel("time (unit: 0.1s)")
+            # graph.set_xlabel("time")
             graph.set_ylabel(colname) 
             if len(cr) > 0:
                 graph.set_yticks(ct, cr) 

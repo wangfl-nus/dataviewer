@@ -417,12 +417,15 @@ class DataViewer():
             self.label_file['text'] = fp.filename
         
     def __update_to_tableviewer(self):    
-        
+         
+        if not hasattr(self.bms_ds, "ds"):
+            return
+         
         tbs = ["BMU", "MMU 1", "MMU 2", "MMU 3", "MMU 4", "MMU 5", "MMU 6", "VS-BMS (E-CANBus)"] 
         
         # print("Channel {}".format(self.chn.get()))
         # print("Table {}".format(tbs[self.tbi.get()]))
-        
+         
         _channel = self.chn.get()
         _tableidx = self.tbi.get()
         if _tableidx ==0: # bmu
