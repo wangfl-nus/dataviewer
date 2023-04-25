@@ -223,7 +223,7 @@ class BMU_System_Message_2:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8)  + data[0]
-            retdata.append(["1,2", ["0-15", "BMU Supply Voltage", val, "", round(val*0.1,2)]])  # res 0.1
+            retdata.append(["1,2", ["0-15", "BMU Supply Voltage", round(val*0.1,2), "", val]])  # res 0.1
              
         return retdata
 
@@ -242,19 +242,19 @@ class BMU_System_Message_3:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8)  + data[0]
-            retdata.append(["1,2", ["0-15", "Total Battery Voltage", val, "", round(val*0.05,2)]])  # res 0.05
+            retdata.append(["1,2", ["0-15", "Total Battery Voltage", round(val*0.05,2), "", val]])  # res 0.05
             
             ''' byte 3, 4 '''
             val = (data[3] << 8)  + data[2]
-            retdata.append(["3,4", ["0-15", "Total Battery Current", val, "", round(val*0.05,2)]]) # res 0.05
+            retdata.append(["3,4", ["0-15", "Total Battery Current", round(val*0.05,2), "", val]]) # res 0.05
             
             ''' byte 5, 6 '''
             val = (data[5] << 8)  + data[4]
-            retdata.append(["5,6", ["0-15", "Single Cumulative Sum", val, "", round(val*0.05,2)]]) # res 0.05
+            retdata.append(["5,6", ["0-15", "Single Cumulative Sum", round(val*0.05,2), "", val]]) # res 0.05
             
             ''' byte 7, 8 '''
             val = (data[7] << 8)  + data[6]
-            retdata.append(["7,8", ["0-15", "Total Battey Capacity (SOC)", val, "", round(val*0.1,2)]]) # res 0.1
+            retdata.append(["7,8", ["0-15", "Total Battey Capacity (SOC)", str(round(val*0.1,2))+"%", "", val]]) # res 0.1
              
         return retdata
 
@@ -275,7 +275,7 @@ class BMU_Information_1:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8)  + data[0]
-            retdata.append(["1,2", ["0-15", "Maximum Cell Voltage", val, "", round(val*0.001,3)]])  # res 0.001
+            retdata.append(["1,2", ["0-15", "Maximum Cell Voltage", round(val*0.001,3), "", val]])  # res 0.001
             
             ''' byte 3    '''
             val =  data[2]
@@ -283,7 +283,7 @@ class BMU_Information_1:
             
             ''' byte 4, 5 '''
             val = (data[4] << 8)  + data[3]
-            retdata.append(["4,5", ["0-15", "Lowest Cell Voltage", val, "", round(val*0.001,3)]])  # res 0.001
+            retdata.append(["4,5", ["0-15", "Lowest Cell Voltage", round(val*0.001,3), "", val]])  # res 0.001
             
             ''' byte 6    '''
             val =  data[5]
@@ -291,7 +291,7 @@ class BMU_Information_1:
  
             ''' byte 7, 8 '''
             val = (data[7] << 8)  + data[6]
-            retdata.append(["7,8", ["0-15", "Average Cell Voltage", val, "", round(val*0.001,3)]])  # res 0.001
+            retdata.append(["7,8", ["0-15", "Average Cell Voltage", round(val*0.001,3), "", val]])  # res 0.001
             
         return retdata
     
@@ -345,11 +345,11 @@ class BMU_Information_3:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8)  + data[0]
-            retdata.append(["1,2", ["0-15","Single Pressure Difference", val, "", round(val*0.001,3)]])  # res 0.001,
+            retdata.append(["1,2", ["0-15","Cell Voltage Difference", round(val*0.001,3), "", val]])  # res 0.001,
             
             ''' byte 3, 4    '''
             val = (data[3] <<8) + data[2]
-            retdata.append(["3,4", ["0-15", "Cell Temperature Difference", val, "", round(val*0.1,2)]]) # res 1
+            retdata.append(["3,4", ["0-15", "Cell Temperature Difference", round(val*0.1,2), "", val]]) # res 1
             
             ''' byte 5 '''
             retdata.append([5, ["0-7", "~", data[4]]]) 
@@ -359,7 +359,7 @@ class BMU_Information_3:
 
             ''' byte 7, 8 '''
             val = (data[7] << 8)  + data[6]
-            retdata.append(["7,8", ["0-15", "The Total Voltage of the load", val, "", round(val*0.05,2)]])  # res 0.05
+            retdata.append(["7,8", ["0-15", "The Total Voltage of the load", round(val*0.05,2), "", val]])  # res 0.05
             
         return retdata
 
@@ -380,11 +380,11 @@ class BMU_Statistical_Data_1:
         if data :
             ''' byte 1 ~ 4 '''
             val = (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0]
-            retdata.append(["1-4", ["0-31", "Charge Accumulation Ampere Hour", val, "", round(val*0.1,2)]])  # res 0.1,
+            retdata.append(["1-4", ["0-31", "Charge Accumulation Ampere Hour", round(val*0.1,2), "", val]])  # res 0.1,
                         
             ''' byte 5 ~ 8 '''
             val = (data[7] << 24) + (data[6] << 16) + (data[5] << 8) + data[4]
-            retdata.append(["5-8", ["0-31", "Charge Accumulation Watt Hour", val, "", round(val*0.1,2)]])  # res 0.1,
+            retdata.append(["5-8", ["0-31", "Charge Accumulation Watt Hour", round(val*0.1,2), "", val]])  # res 0.1,
             
         return retdata
     
@@ -403,11 +403,11 @@ class BMU_Statistical_Data_2:
         if data :
             ''' byte 1 ~ 4 '''
             val = (data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0]
-            retdata.append(["1-4", ["0-31", "Accumulated Discharge Ampere Hour", val, "", round(val*0.1,2)]])  # res 0.1,
+            retdata.append(["1-4", ["0-31", "Accumulated Discharge Ampere Hour", round(val*0.1,2), "", val]])  # res 0.1,
                         
             ''' byte 5 ~ 8 '''
             val = (data[7] << 24) + (data[6] << 16) + (data[5] << 8) + data[4]
-            retdata.append(["5-8", ["0-31", "Accumulated Discharge Watt Hour", val, "", round(val*0.1,2)]])  # res 0.1,
+            retdata.append(["5-8", ["0-31", "Accumulated Discharge Watt Hour", round(val*0.1,2), "", val]])  # res 0.1,
             
         return retdata
     
@@ -461,11 +461,11 @@ class BMU_Current_Information:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8)  + data[0]
-            retdata.append(["1-2", ["0-15", "10s Recharge Current Prediction", val, "", round(val*0.05-1600,3)]])  # res 0.05, offset -1600
+            retdata.append(["1-2", ["0-15", "10s Recharge Current Prediction", round(val*0.05-1600,3), "", val]])  # res 0.05, offset -1600
             
             ''' byte 3, 4    '''
             val = (data[3] <<8) + data[2]
-            retdata.append(["3-4", ["0-15", "10s Discharge Current Prediction", val, "", round(val*0.05-1600,2)]]) # res 0.05, offset -1600
+            retdata.append(["3-4", ["0-15", "10s Discharge Current Prediction", round(val*0.05-1600,2), "", val]]) # res 0.05, offset -1600
              
         return retdata
     
@@ -484,23 +484,22 @@ class BMU_Total_Pressure_Collection:
         if data :
             ''' byte 1, 2 '''
             val = (data[1] << 8) + data[0]
-            retdata.append(["1,2", ["0-15", "HV1 Voltage", val, "", round(val*0.05,2)]])
+            retdata.append(["1,2", ["0-15", "HV1 Voltage", round(val*0.05,2), "", val]])
             
             ''' byte 3, 4 '''
             val = (data[3] << 8) + data[2]
-            retdata.append(["3,4", ["0-15", "HV2 Voltage", val, "", round(val*0.05,2)]])
+            retdata.append(["3,4", ["0-15", "HV2 Voltage", round(val*0.05,2), "", val]])
             
             ''' byte 5, 6 '''
             val = (data[5] << 8) + data[4]
-            retdata.append(["5,6", ["0-15", "Charging Current Requires Evaluation", val, "", round(val*0.05-1600,2), "(Choose fast, slow charging mode and report separately)"]])
+            retdata.append(["5,6", ["0-15", "Charging Current Requires Evaluation", round(val*0.05-1600,2), "", val, "(Choose fast, slow charging mode and report separately)"]])
                         
             ''' byte 7, 8 '''
             val = (data[7] << 8) + data[6]
-            retdata.append(["7,8", ["0-15", "Charging Voltage Requires Evaluation", val, "", round(val*0.05,2), "(Choose fast, slow charging mode and report separately)"]])
+            retdata.append(["7,8", ["0-15", "Charging Voltage Requires Evaluation", round(val*0.05,2), "", val, "(Choose fast, slow charging mode and report separately)"]])
              
         return retdata
 
-    
 
 
 ''' MMU data '''
@@ -571,7 +570,7 @@ class MMU_Information_1:
             
             ''' byte 5,6 '''
             val =( data[5] << 8) + data[4]
-            retdata.append(["5,6", ["0-15", "Total Battery SOC", val, str(round(val*0.1, 4))+"%", rmk]])  # res 0.1
+            retdata.append(["5,6", ["0-15", "Total Battery SOC", str(round(val*0.1, 2))+"%", val, rmk]])  # res 0.1
                              
             ''' byte 7,8 '''
             val =( data[7] << 8) + data[6]
@@ -601,7 +600,7 @@ class MMU_Information_2:
             
             ''' byte 1,2 '''
             val = (data[1] << 8) + data[0]
-            retdata.append(["1,2", ["0-15", "Maximum Cell Voltage", val, round(val*0.001, 3), rmk]])  # res 0.001
+            retdata.append(["1,2", ["0-15", "Maximum Cell Voltage", round(val*0.001, 3), val, rmk]])  # res 0.001
             
             ''' byte 3 '''
             val = data[2]
@@ -609,7 +608,7 @@ class MMU_Information_2:
             
             ''' byte 4,5 '''
             val = (data[4] << 8) + data[3]
-            retdata.append(["4,5", ["0-15", "Lowest Cell Voltage", val, round(val*0.001, 3), rmk]])  # res 0.001
+            retdata.append(["4,5", ["0-15", "Lowest Cell Voltage", round(val*0.001, 3), val, rmk]])  # res 0.001
             
             ''' byte 6 '''
             val = data[5]
@@ -617,7 +616,7 @@ class MMU_Information_2:
             
             ''' byte 7,8 '''
             val = (data[7] << 8) + data[6]
-            retdata.append(["7,8", ["0-15", "Average Cell Voltage", val, round(val*0.001, 3), rmk]])  # res 0.001
+            retdata.append(["7,8", ["0-15", "Average Cell Voltage", round(val*0.001, 3), val, rmk]])  # res 0.001
               
         return retdata
     
@@ -691,19 +690,19 @@ class MMU_Cell_Voltage_Data:
             
             ''' byte 1,2 '''
             val = (data[1] << 8) + data[0]
-            retdata.append(["1,2", ["0-15", desp+str(cell), val, rmk+str(cell), round(val*0.001, 3)]])  # res 0.001
+            retdata.append(["1,2", ["0-15", desp+str(cell), round(val*0.001, 3), rmk+str(cell), val]])  # res 0.001
             
             ''' byte 3,4 '''
             val = (data[3] << 8) + data[2]
-            retdata.append(["3,4", ["0-15", desp+str(cell+1), val, rmk+str(cell+1), round(val*0.001, 3)]])  # res 0.001
+            retdata.append(["3,4", ["0-15", desp+str(cell+1), round(val*0.001, 3), rmk+str(cell+1), val]])  # res 0.001
              
             ''' byte 5,6 '''
             val = (data[5] << 8) + data[4]
-            retdata.append(["5,6", ["0-15", desp+str(cell+2), val, rmk+str(cell+2), round(val*0.001, 3)]])  # res 0.001
+            retdata.append(["5,6", ["0-15", desp+str(cell+2), round(val*0.001, 3), rmk+str(cell+2), val]])  # res 0.001
              
             ''' byte 7,8 '''
             val = (data[7] << 8) + data[6]
-            retdata.append(["7,8", ["0-15", desp+str(cell+3), val, rmk+str(cell+3), round(val*0.001, 3)]])  # res 0.001
+            retdata.append(["7,8", ["0-15", desp+str(cell+3), round(val*0.001, 3), rmk+str(cell+3), val]])  # res 0.001
                 
         return retdata
 

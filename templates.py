@@ -272,7 +272,7 @@ bmu_template = {
     },
     
     "BMU Information 3": { 
-        "Single Pressure Difference":[],	
+        "Cell Voltage Difference":[],	
         "Cell Temperature Difference":[],	
         "The Total Voltage of the load":[]
     },
