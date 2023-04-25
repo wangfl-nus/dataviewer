@@ -118,7 +118,7 @@ class DataViewer():
         self.table_frame = tk.LabelFrame(self.controlframe, text="Tables- Internal Bus")
         self.table_frame.place(height=260, width=220, relx=0.04, y = 80 ) #rely=0.15) # rely=0, 
 
-        self.VSBMU_R = tk.Radiobutton(self.table_frame, text="VS-BMS (E-CANBus)", variable=self.tbi, value=7, padx=5, command=self.table_sel) #, ommand=sel)
+        self.VSBMU_R = tk.Radiobutton(self.table_frame, text="M-BMU (E-CANBus)", variable=self.tbi, value=7, padx=5, command=self.table_sel) #, ommand=sel)
         # self.VSBMU_R.grid(row=1, column=0, columnspan =2, sticky=tk.W, ipady=5, pady=5 )  #  pack(anchor=tk.W) # side=tk.LEFT) # anchor = tk.W)
          
         self.BMU_R = tk.Radiobutton(self.table_frame, text="BMU", variable=self.tbi, value=0, padx=5, command=self.table_sel) #, ommand=sel)
@@ -421,7 +421,7 @@ class DataViewer():
         if not hasattr(self.bms_ds, "ds"):
             return
          
-        tbs = ["BMU", "MMU 1", "MMU 2", "MMU 3", "MMU 4", "MMU 5", "MMU 6", "VS-BMS (E-CANBus)"] 
+        tbs = ["BMU", "MMU 1", "MMU 2", "MMU 3", "MMU 4", "MMU 5", "MMU 6", "M-BMU (E-CANBus)"] 
         
         # print("Channel {}".format(self.chn.get()))
         # print("Table {}".format(tbs[self.tbi.get()]))

@@ -58,7 +58,7 @@ class Plot:
         if _table_idx == 0:
             _sheetT = "BMU" 
         elif _table_idx == 7:
-            _sheetT = "VS-BMS (E-CANBus)"
+            _sheetT = "M-BMU (E-CANBus)"
         else:
             _sheetT = f"MMU {_table_idx}" 
 
