@@ -13,6 +13,7 @@ from bmssession import *
 from xlsxdumper import *
 from util import *
 from templates import *
+from datastorage import *
 
 from tableviewer import * 
 from plot import *
@@ -68,10 +69,15 @@ class DataViewer():
         
         ## session
         self.session = None
+        
+        ## Data Storage
+        self.dstorage = None
 
         ## initialize menu
         m = tk.Menu(self.root)
         self.root.config(menu=m)
+        
+        ## file menu
         self.file_menu = tk.Menu(m, tearoff=False) # Add Menu Dropdown
         m.add_cascade(label="File", menu=self.file_menu)
         self.file_menu.add_command(label="Open raw data file", command=lambda: self.__loaddata())
@@ -87,12 +93,18 @@ class DataViewer():
         self.file_menu.add_command(label="Close session") #, command=lambda: self.__closesession) 
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.root.destroy)
-    
+        
+        ## setting menu
         self.setting_menu = tk.Menu(m, tearoff=False) # Add Menu Dropdown
         m.add_cascade(label="Setting", menu=self.setting_menu)
         self.setting_menu.add_command(label="Select Data Profile", command=lambda: self.__sel_dataprofile())
          
-        
+        ## database menu
+        self.dstorage_menu = tk.Menu(m, tearoff=False) # Add Menu Dropdown
+        m.add_cascade(label="Data Storage", menu=self.dstorage_menu)
+        self.dstorage_menu.add_command(label="Connect Data Storage", command=lambda: self.__sel_dstorage())
+        self.dstorage_menu.add_command(label="Load Data", command=lambda: self.__load_dstorage())
+         
         # Data Frame for TreeView
         self.dataframe = tk.LabelFrame(root, text="Battery Data", name="dataframe")  # frame1
         self.dataframe.place(width=self.layout.dataframe_W, height=self.layout.dataframe_H)  # height=600, width=1010
@@ -484,6 +496,73 @@ class DataViewer():
         plot.draw(df=df, channel=_channel, table_idx=_table_idx)
 
 
+        
+    def __sel_dstorage(self):
+        
+        filename = filedialog.askopenfilename( # initialdir="/",
+                                      title="Select Data Storage",
+                                      filetype=(("Data storage file", "*.i"),))
+        if filename is None:
+            return 
+          
+        # print(filename)  
+        fn1=os.path.basename(filename)
+        fn2=os.path.splitext(fn1)[0] 
+        self.dstorage = DataStorage(filename=fn2)
+        
+        #print(vars(self.dstorage))
+        #print(vars(self.dstorage.d['datastorage-info']))
+        #print(vars(self.dstorage.d['datablock-info']))
+        
+        # TODO: to set data profile according to profile info from data storage
+        self.dataprofile_setting = 1
+        self.redraw_tableframe() 
+        
+        ## disable profile setting 
+        self.setting_menu.entryconfig("Select Data Profile", state="disabled")
+        
+        if self.session is None:
+            self.label_file['text'] = fn2
+          
+    def __load_dstorage(self):
+        rb = tk.Toplevel(self.root)
+        rb.wm_title("Load data")
+        rb.geometry("350x200")
+          
+        ts_s=tk.StringVar()
+        ts_s.set("0")
+        
+        du_s=tk.StringVar()
+        du_s.set("300")
+ 
+        rb_label = ttk.Label(rb, text="Define start time and duration in seconds")
+        rb_label.grid(row=0, column=0, sticky = tk.W, padx = 5, pady = 2, columnspan = 2)
+         
+        L1 = tk.Label(rb, text="Start at (seconds)").grid(row=1, column=0, sticky = tk.W, padx = 5, pady = 2)
+        R1 = tk.Entry(rb, textvariable = ts_s) #, command=selection)  
+        R1.grid(row=1, column=1, sticky = tk.W, padx = 5, pady = 2 ) 
+        
+        L2 = tk.Label(rb, text="Duration (seconds)").grid(row=2, column=0, sticky = tk.W, padx = 5, pady = 2)
+        R2 = tk.Entry(rb, textvariable = du_s) # ,  command=selection)  
+        R2.grid(row=2, column=1, sticky = tk.W, padx = 5, pady = 2 ) 
+  
+        def _rb_quit():
+            
+            st = int(ts_s.get())
+            du = int(du_s.get())
+            print("ts: {}, du:{}".format(st, du))
+            # TODO load data and inset to table 
+            LoadFromDataStorage(self.dstorage, st, du)
+            
+            rb.quit()     # stops mainloop
+            rb.destroy()  # this is necessary on Windows to prevent
+  
+        rb_btn = tk.Button(rb, text="Load", padx=10, command=lambda: _rb_quit())
+        rb_btn.grid(row=3, column=0, sticky = tk.W, padx = 5, pady = 12 ) 
+         
+        self.root.mainloop() 
+         
+        
 # In[ ]:
 
 

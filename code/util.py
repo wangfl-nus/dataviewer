@@ -5,6 +5,8 @@ raw data from .txt file or xlsx, cscv files
 Return: a list of lines in raw data file
         or pandas df format from xlsx or csv  
 '''
+import datetime, time
+
 from bmsdataset import * 
 from xlsxdumper import *
  
@@ -203,7 +205,35 @@ class BMS_ds2xlsx():
         return self.xlsx_df
    
         
+''' 
+ Load data from data storage 
+ 
+ st - start time in seconds
+ du - duration in seconds
+ 
+'''
 
+
+def timestamp_add(ts, du):
+    _dt = datetime.datetime.fromtimestamp(ts) + datetime.timedelta(milliseconds=(du/10)) #
+    return time.mktime(_dt.timetuple())
+     
+
+def LoadFromDataStorage(dstorage, st, du):
+    
+    # add st to timestamp 
+    
+    ts = dstorage.d['datablock-info'].d['blt'][0]['chns'][0]['ts'] 
+    ts = timestamp_add(ts, st*10000) 
+    bbb, bl = dstorage.load(chn=0, ts=ts, du=(du*10000), oft='txt')
+    print(bbb) 
+    print(bl)
+    
+    # bbb, bl = dstorage.load(chn=1, ts= 1684315446.0, du=2000000, oft='txt')
+    
+    
+
+    
 if __name__ == "__main__":
     from dataparser import *
     from bmsdataset import * 
