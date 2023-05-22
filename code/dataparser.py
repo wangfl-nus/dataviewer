@@ -368,8 +368,35 @@ class BMS_frame:
         return "Invalid Frame ID", FID_FT_INVALID , _mmu, _seq
 
 
-#----
 
+#
+# Extend BMS_frame, enable to parse data from data storage
+#
+class BMS_frameX(BMS_frame):
+     
+         def __init__(self, line=None, mode=1, chn=0, finfo=0x88):
+            
+            if mode == 0:
+                return super.__init__(line=line)
+             
+            ''' parse line '''
+            data = line
+            try :
+                self.invalid = False
+                self.intval = data[0]  
+                self.chn    = chn 
+                self.finfo  = finfo    
+                self.fid    = data[1]
+                self.data   = data[2] # [int(i,16) for i in x[4:]] 
+            except :
+                print("Except {}".format(data))
+                raise Exception(str(data))
+                return
+             
+            # print(vars(self))
+            
+            ''' parse frame ID '''
+            self.fname, self.ft, self.mmu, self.seq = self.parse_fid()  
 
 #+*In[10]:*+
 #[source, ipython3]

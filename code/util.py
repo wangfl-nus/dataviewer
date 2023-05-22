@@ -219,6 +219,7 @@ def timestamp_add(ts, du):
     return time.mktime(_dt.timetuple())
      
 
+'''
 def LoadFromDataStorage(dstorage, st, du):
     
     # add st to timestamp 
@@ -231,7 +232,8 @@ def LoadFromDataStorage(dstorage, st, du):
     
     # bbb, bl = dstorage.load(chn=1, ts= 1684315446.0, du=2000000, oft='txt')
     
-    
+    return bbb
+'''    
 
     
 if __name__ == "__main__":

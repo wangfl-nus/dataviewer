@@ -523,7 +523,41 @@ class DataViewer():
         
         if self.session is None:
             self.label_file['text'] = fn2
-          
+      
+    def __load_from_DataStorage(self, st, du):
+        
+        if self.bms_ds is None:
+            self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0 if self.dataprofile_setting==0 else data_profile_1)) 
+         
+        ts = self.dstorage.d['datablock-info'].d['blt'][0]['chns'][0]['ts'] 
+        ts = timestamp_add(ts, st*10000) # tranlate sec into 0.1ms 
+        
+        ## channel 0 data 
+        data = self.dstorage.load(chn=0, ts=ts, du=(du*10000), oft='txt')
+  
+        # insert the data to bms_ds 
+        if data : 
+            for d in data: 
+                try:    
+                    self.bms_ds.insert(ojson=BMS_frameX(line=d, chn=0).dump_to_json()) 
+                except Exception as e:
+                    print("Except: {}".format(e))
+                    continue
+  
+        ## channel 1 data
+        data = self.dstorage.load(chn=1, ts=ts, du=(du*10000), oft='txt')
+ 
+        # insert the data to bms_ds  
+        if data :  
+            for d in data: 
+                try:    
+                    self.bms_ds.insert(ojson=BMS_frameX(line=d, chn=1).dump_to_json())
+                except Exception as e:
+                    print("Except {}".format(e))
+                    continue
+ 
+        self.__update_to_tableviewer()
+ 
     def __load_dstorage(self):
         rb = tk.Toplevel(self.root)
         rb.wm_title("Load data")
@@ -551,12 +585,13 @@ class DataViewer():
             st = int(ts_s.get())
             du = int(du_s.get())
             print("ts: {}, du:{}".format(st, du))
-            # TODO load data and inset to table 
-            LoadFromDataStorage(self.dstorage, st, du)
             
             rb.quit()     # stops mainloop
             rb.destroy()  # this is necessary on Windows to prevent
-  
+             
+            self.__load_from_DataStorage(st, du)
+            
+            
         rb_btn = tk.Button(rb, text="Load", padx=10, command=lambda: _rb_quit())
         rb_btn.grid(row=3, column=0, sticky = tk.W, padx = 5, pady = 12 ) 
          
