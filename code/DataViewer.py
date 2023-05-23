@@ -392,7 +392,8 @@ class DataViewer():
          
         ## disable profile setting 
         self.setting_menu.entryconfig("Select Data Profile", state="disabled")
-    
+        self.dstorage_menu.entryconfig("Connect Data Storage", state="disabled")
+         
         if self.bms_ds is None:
             self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0 if self.dataprofile_setting==0 else data_profile_1)) 
             
@@ -514,8 +515,9 @@ class DataViewer():
         #print(vars(self.dstorage.d['datastorage-info']))
         #print(vars(self.dstorage.d['datablock-info']))
         
-        # TODO: to set data profile according to profile info from data storage
-        self.dataprofile_setting = 1
+        # Retrive data profile from data storage 
+        proto =  self.dstorage.d['datastorage-info'].d['proto'] 
+        self.dataprofile_setting = 1 if proto == 0x0000 else 0
         self.redraw_tableframe() 
         
         ## disable profile setting 
@@ -526,6 +528,15 @@ class DataViewer():
       
     def __load_from_DataStorage(self, st, du):
         
+        ## disable profile setting 
+        self.setting_menu.entryconfig("Select Data Profile", state="disabled")
+        self.dstorage_menu.entryconfig("Connect Data Storage", state="disabled")
+         
+        if self.bms_ds:
+            tmp_bms_ds = self.bms_ds
+            self.bms_ds = None
+            del tmp_bms_ds 
+            
         if self.bms_ds is None:
             self.bms_ds = BMS_Dataset(name="bms-dataset", dataprofile=DataProfile(dataprofile=data_profile_0 if self.dataprofile_setting==0 else data_profile_1)) 
          

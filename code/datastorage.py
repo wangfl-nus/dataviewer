@@ -251,7 +251,7 @@ class DataStorage:
                 chn = int(x[1], 16)
                 finfo  = int(x[2], 16)
                 fid    = int(x[3], 16)
-                data   = [int(i,16) for i in x[4:]]
+                # data   = [int(i,16) for i in x[4:]]
             except IndexError:
                 print("IndexError: line={}, x={}".format(line, x))
                 continue
@@ -260,15 +260,24 @@ class DataStorage:
                 continue
 
             info = bytearray([rs&0xff]) + bytearray(fid.to_bytes(4, byteorder = 'big')[1:]) 
-            data = bytearray([int(i,16) for i in x[4:]]) 
-            length = len(info)+len(data)
+            try:
+                data = bytearray([int(i,16) for i in x[4:]])
+            except ValueError:
+                print("ValueError: line={}, x={}".format(line, x)) 
+                continue
+            
+            length = len(data)
+            if length < 8:
+                # print("data length < 8")
+                continue
+                 
+            length += len(info)  #  +len(data)
             if chn in range(2):  # two channels
                 self.d['data'][chn].append(info+data)
                 self.d['cb']['chns'][chn]['nof'] += 1
                 self.d['cb']['chns'][chn]['du'] += rs
                 self.d['cb']['chns'][chn]['len'] += length
-                # TODO, update chn.du, ds 
-                
+                 
             if size > 0:
                 count += 1
                 if count == size:
@@ -336,12 +345,16 @@ class DataStorage:
                 for i in range(blk['chns'][chn]['nof']):
                     l  = i*lof
                     _bytes = buf[l:l+lof]
-                    _ds = []
-                    # parse into ds
-                    _ds.append(_bytes[0])  # rs
-                    _ds.append( int.from_bytes((b'\x18'+_bytes[1:4]), byteorder='big') ) # fid
-                    _d = [i for i in _bytes[4:]]
-                    _ds.append(_d)
-                    ds.append(_ds)       
-                    
-        return ds  # , b_list ## b_list for test only
+                    try:
+                        _ds = []
+                        # parse into ds
+                        _ds.append(_bytes[0])  # rs
+                        _ds.append( int.from_bytes((b'\x18'+_bytes[1:4]), byteorder='big') ) # fid
+                        _d = [i for i in _bytes[4:]]
+                        _ds.append(_d)
+                        ds.append(_ds)       
+                    except IndexError:
+                        print("IndexError: {} at (sp) {}, i:{}, l:{}".format(_bytes, blk['sp'], i, l)) 
+                        continue
+                        
+        return ds # , b_list for test
