@@ -203,31 +203,31 @@ class BMS2VS_Battery_Data_Message_1():
             
             ''' byte 2'''
             retbyte = ["2"] # byte 2
-            val = data[2]
+            val = data[2]*2  # rel, 2KWh 
             retbyte.append(["0-7", "Designed Battery Capacity", val]) 
             retdata.append(retbyte)
             
             ''' byte 3'''
             retbyte = ["3"] # byte 3
-            val = data[3]
+            val = data[3]*2 # rel, 2KWh
             retbyte.append(["0-7", "Current Battery Capacity", val]) 
             retdata.append(retbyte)
             
             ''' byte 4'''
             retbyte = ["4"] # byte 4
-            val = data[4]
+            val = data[4]*0.5 # rel, 0.5% 
             retbyte.append(["0-7", "Battery Upper Charge Limit", val]) 
             retdata.append(retbyte)
             
             ''' byte 5'''
             retbyte = ["5"] # byte 5
-            val = data[5]
+            val = data[5]*0.5 # rel 0.5%
             retbyte.append(["0-7", "Battery SOC Low Limit", val]) 
             retdata.append(retbyte)
             
             ''' byte 6'''
             retbyte = ["6"] # byte 6
-            val = data[6]
+            val = data[6]*0.5 # rel, 0.5%
             retbyte.append(["0-7", "Battery SOC Too Low Limit", val]) 
             retdata.append(retbyte)
             
@@ -291,7 +291,7 @@ class BMS2VS_Status_Message_1():
         if data:
             ''' byte 0 '''
             retbyte = ["0"] # byte 0
-            retbyte.append(["0-7", "Battery System State of Charge(SOC)", data[0]]) 
+            retbyte.append(["0-7", "Battery System State of Charge(SOC)", (data[0]*0.5)])  # rel, 0.5% 
             retdata.append(retbyte)
             
             ''' byte 1 '''
@@ -337,7 +337,7 @@ class BMS2VS_Status_Message_1():
                     
             ''' byte 6 '''
             retbyte = ["6"] # byte 6
-            retbyte.append(["0-7", "Battery Insulation Resistance", data[6]]) 
+            retbyte.append(["0-7", "Battery Insulation Resistance", (data[6]*8)]) # rel, 8kOhm 
             retdata.append(retbyte)
             
             ''' byte 7 '''
@@ -365,25 +365,25 @@ class BMS2VS_Status_Message_2():
             ''' byte 0-1 '''
             retbyte = ["0-1"] # byte 0-1
             val = (data[1]<<8) + data[0]
-            retbyte.append(["0-15", "Battery System Voltage", val]) 
+            retbyte.append(["0-15", "Battery System Voltage", round(val*0.1,2)]) # rel, 0.1V 
             retdata.append(retbyte)
              
             ''' byte 2-3 '''
             retbyte = ["2-3"] # byte 0-1
             val = (data[3]<<8) + data[2]
-            retbyte.append(["0-15", "Battery System Current", val]) 
+            retbyte.append(["0-15", "Battery System Current", val*0.1]) # rel, 0.1A
             retdata.append(retbyte)
             
             ''' byte 4-5 '''
             retbyte = ["4-5"] # byte 4-5
             val = (data[5]<<8) + data[4]
-            retbyte.append(["0-15", "Max Discharge Current permitted", val]) 
+            retbyte.append(["0-15", "Max Discharge Current permitted", val*0.1]) # rel, 0.1A  
             retdata.append(retbyte)
             
             ''' byte 6-7 '''
             retbyte = ["6-7"] # byte 6-7
             val = (data[7]<<8) + data[6]
-            retbyte.append(["0-15", "Max Regenerative Current permitted", val]) 
+            retbyte.append(["0-15", "Max Regenerative Current permitted", val*0.1]) # rel, 0.1A 
             retdata.append(retbyte)
               
         return retdata
@@ -441,13 +441,13 @@ class BMS2VS_Charger_Setpoint_1():
             ''' byte 0-1 '''
             retbyte = ["0-1"] # byte 0-1
             val = (data[1] <<8) + data[0]
-            retbyte.append(["0-15", "Maximum Charging Voltage Limit", val]) 
+            retbyte.append(["0-15", "Maximum Charging Voltage Limit", val*0.1]) # rel, 0.1V 
             retdata.append(retbyte)
             
             ''' byte 2-3 '''
             retbyte = ["2-3"] # byte 2-3
             val = (data[3] <<8) + data[2]
-            retbyte.append(["0-15", "Maximum Charging Current Limit", val]) 
+            retbyte.append(["0-15", "Maximum Charging Current Limit", val*0.1]) # rel, 0.1A 
             retdata.append(retbyte) 
         
         return retdata 
@@ -467,13 +467,13 @@ class BMS2VS_Charger_Setpoint_2():
             ''' byte 0-1 '''
             retbyte = ["0-1"] # byte 0-1
             val = (data[1] <<8) + data[0]
-            retbyte.append(["0-15", "Charging Voltage Set-point", val]) 
+            retbyte.append(["0-15", "Charging Voltage Set-point", round(val*0.1,2)]) # rel, 0.1V 
             retdata.append(retbyte)
             
             ''' byte 2-3 '''
             retbyte = ["2-3"] # byte 2-3
             val = (data[3] <<8) + data[2]
-            retbyte.append(["0-15", "Charging Current Set-point", val]) 
+            retbyte.append(["0-15", "Charging Current Set-point", val*0.1])  # rel 0.1A 
             retdata.append(retbyte) 
         
             ''' byte 4 '''
